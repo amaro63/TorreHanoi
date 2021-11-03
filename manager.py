@@ -1,29 +1,34 @@
+import os
 from disco import disco
 from pino import pino
 from display import display
-from os import system, name
-
+from os.path import exists
+import json
 
 class manager:
 
     def __init__(self, min, max):
-        self.numDiscos = self.obterNumeroDiscos(min, max)
+        self.nomeArquivo = "saved.json"
+        self.imp = display()
+        self.discos = []
+        self.gameOver = False
+        self.carregouGame = self.recuperarGame()
+        if not self.carregouGame:
+            self.numDiscos = self.obterNumeroDiscos(min, max)
+            self.inicializaPinosDiscos()
+            for i in range(self.numDiscos):
+                self.pinos[0].empilharDisco(self.discos[self.numDiscos-1-i])
+
+    def inicializaPinosDiscos(self):
         self.p1 = pino(self.numDiscos)
         self.p2 = pino(self.numDiscos)
         self.p3 = pino(self.numDiscos)
         self.pinos = [self.p1, self.p2, self.p3]
-        self.discos = []
         for i in range(self.numDiscos):
             self.discos.append(disco(1+2*(i+1)))
-        self.imp = display()
-        self.gameOver = False
-
-    def inicializar(self):
-        for i in range(self.numDiscos):
-            self.p1.empilharDisco(self.discos[self.numDiscos-1-i])
 
     def obterNumeroDiscos(self, min, max):
-        self.clear()
+        #self.clear()
         discos = 0
         while not discos in range(min, max+1):
             try:
@@ -42,25 +47,62 @@ class manager:
                 input("<Enter>")
         return pino
 
-    def clear(self):
-        if name == 'nt':
-            _ = system('cls')
-        else:
-            _ = system('clear')
-
     def isGameOver(self):
         return self.gameOver
 
+# {"numDiscos": 3, "p1": [7, 0, 0], "p2": [3, 0, 0], "p3": [5, 0, 0]}
+
+    def recuperarGame(self):
+        if not exists(self.nomeArquivo):
+            return False
+        try:
+            with open(self.nomeArquivo) as f:
+                data = json.load(f)
+            self.numDiscos = int(data["numDiscos"])
+            self.inicializaPinosDiscos()
+            for valor in data["p1"]:
+                aux = valor//2
+                if aux > 0:
+                    self.pinos[0].empilharDisco(self.discos[aux-1])
+            for valor in data["p2"]:
+                aux = valor//2
+                if aux > 0:
+                    self.pinos[1].empilharDisco(self.discos[aux-1])
+            for valor in data["p3"]:
+                aux = valor//2
+                if aux > 0:
+                    self.pinos[2].empilharDisco(self.discos[aux-1])
+        except:
+            print("Algo deu errado ao carregar o game...")
+            input("<Enter>")
+        return True
+
+    def salvarGame(self):
+        myDict = {
+            "numDiscos" : self.numDiscos,
+        }
+        myDict.update({"p1" : self.pinos[0].toList()})
+        myDict.update({"p2" : self.pinos[1].toList()})
+        myDict.update({"p3" : self.pinos[2].toList()})
+        try:
+            with open(self.nomeArquivo, "w") as file:
+                json.dump(myDict, file)
+        except:
+            print("Algo deu errado ao salvar o game...")
+            input("<Enter>")
+
     def movimentarDisco(self):
-        self.clear()
+        self.imp.clear()
         self.imp.mostrar(self.pinos)
         origem = self.obterPino("Retirar disco de qual pino (1 a 3, 0 = fim)? ")
         if origem == 0:
             self.gameOver = True
+            self.salvarGame()
             return
         destino = self.obterPino("Mover disco para qual pino (1 a 3, 0 = fim)? ")
         if destino == 0:
             self.gameOver = True
+            self.salvarGame()
             return
         if self.pinos[origem-1].isVazio():
             print("Este pino está vazio")
@@ -81,7 +123,17 @@ class manager:
             input("<Enter>")
         if self.pinos[0].isVazio() and (self.pinos[1].isVazio() or self.pinos[2].isVazio()):
             self.gameOver = True
-            self.clear()
+            self.imp.clear()
             self.imp.mostrar(self.pinos)
             print("Muito bom, você conseguiu mover a torre de Hanoi\n")
+            if self.carregouGame:
+                resposta = ""
+                while not resposta in {'s','n'}:
+                    try:
+                        resposta = input("Game finalizado. Quer remover o jogo salvo? (s/n) ")
+                    except:
+                        print("Algo deu errado...")
+                        input("<Enter>")
+                if resposta == 's':
+                    os.remove(self.nomeArquivo)
         return

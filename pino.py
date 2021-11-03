@@ -1,5 +1,5 @@
 from disco import disco
-
+import json
 
 class pino:
 
@@ -9,6 +9,15 @@ class pino:
         self.pilha = []
         for i in range(numPosicoes):
             self.pilha.append(0)
+
+    def toList(self):
+        jsonList = []
+        for item in self.pilha:
+            if type(item) is disco:
+                jsonList.append(item.tamanho)
+            else:
+                jsonList.append(0)
+        return jsonList
 
     def isCheio(self):
         return (self.proximoVazio == -1)

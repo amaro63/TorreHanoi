@@ -1,6 +1,4 @@
-from disco import disco
-from pino import pino
-
+from os import system, name
 
 class display:
 
@@ -22,6 +20,12 @@ class display:
             print(linha)
         print(self.vazia)
         print(self.bottom)
+
+    def clear(self):
+        if name == 'nt':
+            _ = system('cls')
+        else:
+            _ = system('clear')
 
     def formata_disco(self, d):
         linha = "          |          "
