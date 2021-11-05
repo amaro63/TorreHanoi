@@ -49,7 +49,7 @@ class manager:
         discos = 0
         while not discos in range(min, max+1):
             try:
-                discos = int(input("Quantos discos ("+str(min) + " a "+str(max) + ")? "))
+                discos = int(input(f"Quantos discos ({min} a {max})? "))
             except:
                 print("Valor inválido.")
         return discos
@@ -94,8 +94,6 @@ class manager:
     # # # # # # # # # # # # # # # # # # # # # #
     def isGameOver(self):
         return self.gameOver
-
-# {"numDiscos": 3, "p1": [7, 0, 0], "p2": [3, 0, 0], "p3": [5, 0, 0]}
 
 
     # # # # # # # # # # # # # # # # # # # # # #
@@ -168,20 +166,24 @@ class manager:
         self.imp.clear()
         self.imp.mostrar(self.pinos)
         print("Movimentos executados: "+str(self.numMovimentos))
+
         origem = self.obterPino("Retirar disco de qual pino (1 a 3, 0 = fim)? ")
         if origem == 0:
             self.gameOver = True
             self.salvarGame()
             return
+
         destino = self.obterPino("Mover disco para qual pino (1 a 3, 0 = fim)? ")
         if destino == 0:
             self.gameOver = True
             self.salvarGame()
             return
+
         if self.pinos[origem-1].isVazio():
             print("Este pino está vazio")
             input("<Enter>")
             return
+
         origem -= 1
         destino -= 1
         discoOrigem = self.pinos[origem].topo()
@@ -191,16 +193,19 @@ class manager:
                 print("O disco a ser movido deve ser menor que o disco no topo do pino de destino")
                 input("<Enter>")
                 return
+
         discoMovimentado = self.pinos[origem].desempilharDisco()
         if not self.pinos[destino].empilharDisco(discoMovimentado):
             print("Houve um erro ao movimentar o disco")
             input("<Enter>")
+            return
+
         self.numMovimentos += 1
         if self.pinos[0].isVazio() and (self.pinos[1].isVazio() or self.pinos[2].isVazio()):
             self.gameOver = True
             self.imp.clear()
             self.imp.mostrar(self.pinos)
-            print("Muito bom, você conseguiu mover a torre de Hanoi em "+str(self.numMovimentos)+" movimentos.\n")
+            print(f"Muito bom, você conseguiu mover a torre de Hanoi em {self.numMovimentos} movimentos:\n")
             if self.carregouGame:
                 resposta = ""
                 while not resposta in ['s','n']:
@@ -211,4 +216,3 @@ class manager:
                         input("<Enter>")
                 if resposta == 's':
                     os.remove(self.nomeArquivo)
-        return
