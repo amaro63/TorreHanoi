@@ -3,6 +3,11 @@ import json
 
 class pino:
 
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # ctor
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def __init__(self, numPosicoes):
         self.numPosicoes = numPosicoes
         self.proximoVazio = 0
@@ -10,6 +15,12 @@ class pino:
         for i in range(numPosicoes):
             self.pilha.append(0)
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # toList
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def toList(self):
         jsonList = []
         for item in self.pilha:
@@ -19,12 +30,30 @@ class pino:
                 jsonList.append(0)
         return jsonList
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # isCheio
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def isCheio(self):
         return (self.proximoVazio == -1)
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # isVazio
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def isVazio(self):
         return (self.proximoVazio == 0)
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # empilharDisco
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def empilharDisco(self, disco):
         if self.isCheio():
             return False
@@ -38,6 +67,12 @@ class pino:
             self.proximoVazio += 1
         return True
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # obterIndiceTopo
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def obterIndiceTopo(self):
         if self.isVazio():
             return None
@@ -50,6 +85,12 @@ class pino:
                 indice = 0
         return indice
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # desempilharDisco
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def desempilharDisco(self):
         indice = self.obterIndiceTopo()
         if indice == None:
@@ -59,6 +100,12 @@ class pino:
         self.proximoVazio = indice
         return disco
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # topo
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def topo(self):
         indice = self.obterIndiceTopo()
         if indice == None:

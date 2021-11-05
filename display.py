@@ -2,12 +2,23 @@ from os import system, name
 
 class display:
 
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # ctor
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def __init__(self):
         self.branco = " "
         self.item = "="
         self.bottom = 75*self.item
         self.vazia = "               |                    |                    |"
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # mostrar
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def mostrar(self, pinos):
         print("\n               1                    2                    3\n")
         l = len(pinos[0].pilha)
@@ -21,12 +32,24 @@ class display:
         print(self.vazia)
         print(self.bottom)
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # clear
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def clear(self):
         if name == 'nt':
             _ = system('cls')
         else:
             _ = system('clear')
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # formata_disco
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def formata_disco(self, d):
         linha = "          |          "
         if type(d) is not int:

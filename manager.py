@@ -7,6 +7,11 @@ import json
 
 class manager:
 
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # ctor
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def __init__(self, min, max):
         self.nomeArquivo = "saved.json"
         self.imp = display()
@@ -19,6 +24,12 @@ class manager:
             for i in range(self.numDiscos):
                 self.pinos[0].empilharDisco(self.discos[self.numDiscos-1-i])
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    # inicializaPinosDiscos()
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def inicializaPinosDiscos(self):
         self.p1 = pino(self.numDiscos)
         self.p2 = pino(self.numDiscos)
@@ -27,6 +38,12 @@ class manager:
         for i in range(self.numDiscos):
             self.discos.append(disco(1+2*(i+1)))
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    #  obterNumeroDiscos
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def obterNumeroDiscos(self, min, max):
         #self.clear()
         discos = 0
@@ -37,6 +54,28 @@ class manager:
                 print("Valor inválido.")
         return discos
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    #  obterRespostaSN
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
+    def obterRespostaSN(self, msg):
+        resposta = ""
+        while not resposta in ['s','n']:
+            try:
+                resposta = input(msg)
+            except:
+                print("Algo deu errado...")
+                input("<Enter>")
+        return (resposta == 's')
+
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    #  obterPino
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def obterPino(self, msg):
         pino = -1
         while not pino in range(4):
@@ -47,14 +86,30 @@ class manager:
                 input("<Enter>")
         return pino
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    #  isGameOver
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def isGameOver(self):
         return self.gameOver
 
 # {"numDiscos": 3, "p1": [7, 0, 0], "p2": [3, 0, 0], "p3": [5, 0, 0]}
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    #  recuperarGame
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def recuperarGame(self):
         if not exists(self.nomeArquivo):
             return False
+
+        if self.obterRespostaSN("Existe um game salvo. Quer carregar este jogo? (s/n) ") == 'n':
+            return False
+
         try:
             with open(self.nomeArquivo) as f:
                 data = json.load(f)
@@ -77,20 +132,36 @@ class manager:
             input("<Enter>")
         return True
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    #  salvarGame
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def salvarGame(self):
-        myDict = {
-            "numDiscos" : self.numDiscos,
-        }
-        myDict.update({"p1" : self.pinos[0].toList()})
-        myDict.update({"p2" : self.pinos[1].toList()})
-        myDict.update({"p3" : self.pinos[2].toList()})
+        if self.obterRespostaSN("Game finalizado. Quer salvar este jogo? (s/n) ") == 'n':
+            return False
+
         try:
+            myDict = {
+                "numDiscos" : self.numDiscos,
+            }
+            myDict.update({"p1" : self.pinos[0].toList()})
+            myDict.update({"p2" : self.pinos[1].toList()})
+            myDict.update({"p3" : self.pinos[2].toList()})
+
             with open(self.nomeArquivo, "w") as file:
                 json.dump(myDict, file)
         except:
             print("Algo deu errado ao salvar o game...")
             input("<Enter>")
 
+
+    # # # # # # # # # # # # # # # # # # # # # #
+    #
+    #  movimentarDisco
+    #
+    # # # # # # # # # # # # # # # # # # # # # #
     def movimentarDisco(self):
         self.imp.clear()
         self.imp.mostrar(self.pinos)
@@ -128,7 +199,7 @@ class manager:
             print("Muito bom, você conseguiu mover a torre de Hanoi\n")
             if self.carregouGame:
                 resposta = ""
-                while not resposta in {'s','n'}:
+                while not resposta in ['s','n']:
                     try:
                         resposta = input("Game finalizado. Quer remover o jogo salvo? (s/n) ")
                     except:
