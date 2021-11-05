@@ -17,6 +17,7 @@ class manager:
         self.imp = display()
         self.discos = []
         self.gameOver = False
+        self.numMovimentos = 0
         self.carregouGame = self.recuperarGame()
         if not self.carregouGame:
             self.numDiscos = self.obterNumeroDiscos(min, max)
@@ -45,7 +46,6 @@ class manager:
     #
     # # # # # # # # # # # # # # # # # # # # # #
     def obterNumeroDiscos(self, min, max):
-        #self.clear()
         discos = 0
         while not discos in range(min, max+1):
             try:
@@ -107,13 +107,14 @@ class manager:
         if not exists(self.nomeArquivo):
             return False
 
-        if self.obterRespostaSN("Existe um game salvo. Quer carregar este jogo? (s/n) ") == 'n':
+        if not self.obterRespostaSN("Existe um game salvo. Quer carregar este jogo? (s/n) "):
             return False
 
         try:
             with open(self.nomeArquivo) as f:
                 data = json.load(f)
             self.numDiscos = int(data["numDiscos"])
+            self.numMovimentos = int(data["numMovimentos"])
             self.inicializaPinosDiscos()
             for valor in data["p1"]:
                 aux = valor//2
@@ -139,12 +140,13 @@ class manager:
     #
     # # # # # # # # # # # # # # # # # # # # # #
     def salvarGame(self):
-        if self.obterRespostaSN("Game finalizado. Quer salvar este jogo? (s/n) ") == 'n':
+        if not self.obterRespostaSN("Game finalizado. Quer salvar este jogo? (s/n) "):
             return False
 
         try:
             myDict = {
                 "numDiscos" : self.numDiscos,
+                "numMovimentos" : self.numMovimentos
             }
             myDict.update({"p1" : self.pinos[0].toList()})
             myDict.update({"p2" : self.pinos[1].toList()})
@@ -165,6 +167,7 @@ class manager:
     def movimentarDisco(self):
         self.imp.clear()
         self.imp.mostrar(self.pinos)
+        print("Movimentos executados: "+str(self.numMovimentos))
         origem = self.obterPino("Retirar disco de qual pino (1 a 3, 0 = fim)? ")
         if origem == 0:
             self.gameOver = True
@@ -192,11 +195,12 @@ class manager:
         if not self.pinos[destino].empilharDisco(discoMovimentado):
             print("Houve um erro ao movimentar o disco")
             input("<Enter>")
+        self.numMovimentos += 1
         if self.pinos[0].isVazio() and (self.pinos[1].isVazio() or self.pinos[2].isVazio()):
             self.gameOver = True
             self.imp.clear()
             self.imp.mostrar(self.pinos)
-            print("Muito bom, você conseguiu mover a torre de Hanoi\n")
+            print("Muito bom, você conseguiu mover a torre de Hanoi em "+str(self.numMovimentos)+" movimentos.\n")
             if self.carregouGame:
                 resposta = ""
                 while not resposta in ['s','n']:
