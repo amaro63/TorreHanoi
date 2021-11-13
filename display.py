@@ -1,4 +1,5 @@
-from os import system, name
+from os import system
+from os import name
 
 class display:
 

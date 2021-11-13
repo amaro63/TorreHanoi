@@ -1,5 +1,4 @@
 from disco import disco
-import json
 
 class pino:
 
